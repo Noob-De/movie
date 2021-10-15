@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie App</title>
+    <style>
+        *{
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+
+        }
+        #container {
+            width: 90%;
+            height: 100%;
+            margin: 100px auto;
+            background-color: rosybrown;
+            border-radius: 10px;
+            text-align: center;
+            padding: 50px;
+        }
+
+        #movie {
+            width: 30%;
+            line-height: 40px;
+            text-indent: 25px;
+        }
+
+        #btn {
+            width: 20%;
+            height: 45px;
+            background-color: black;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <h1>Movie Mania</h1>
+        <input type="text" placeholder="Enter Movie Name" id="movie" />
+        <button id="btn" onclick="searchMovie()">Search</button>
+        <div id="data"><br /><br /></div>
+    </div>
+</body>
+
+</html>
+
+<script>
+    var div_data = document.getElementById("data");
+
+    async function searchMovie() {
+        try {
+            let movie = document.getElementById("movie").value;
+            let moviedata = await fetch(
+                `http://www.omdbapi.com/?t=${movie}&apikey=4652dbeb&type=movie`
+            );
+            let display = await moviedata.json();
+            if (display.Response == "True") { } else {
+                error();
+            }
+
+            div_data.innerHTML = "";
+            let title = document.createElement("h1");
+            title.innerHTML = "Title :-  " + display.Title;
+            //  title.style.fontSize="26px";
+            title.style.color = "red";
+
+            let year = document.createElement("p");
+            year.innerHTML = "Released Date  :-  " + display.Released;
+            year.style.fontSize = "22px";
+
+            let ratings = document.createElement("p");
+            ratings.innerHTML = "IMDB Ratings :-  " + display.imdbRating + " Stars";
+            ratings.style.fontSize = "24px";
+            ratings.style.color = "green";
+
+            if (display.imdbRating > 8.5) {
+                let recommend = document.createElement("h1");
+                recommend.innerHTML = "Recommended to Watch";
+                recommend.style.color = "gold";
+                ratings.append(recommend);
+            }
+
+            let genre = document.createElement("p");
+            genre.innerHTML = "Genre :-   " + display.Genre; //`${JSON.stringify(display)}`;
+            genre.style.fontSize = "24px";
+            genre.style.color = "blue";
+
+            let plot = document.createElement("p");
+            plot.innerHTML = "Movie Plot :-  " + display.Plot;
+            plot.style.fontSize = "22px";
+            plot.style.color = "orange";
+
+            let lang = document.createElement("p");
+            lang.innerHTML = "Language :-  " + display.Language; 
+            lang.style.fontSize = "22px";
+            lang.style.color = "limegreen";
+
+            let img = document.createElement("img");
+            img.src = display.Poster;
+            img.style.marginTop = "50px";
+            console.log("display:", display);
+
+            div_data.append(img, title, year, ratings, genre, lang, plot);
+
+            movie = document.getElementById("movie").value = "";
+        } catch (err) {
+            function error() {
+                div_data.innerHTML = "";
+                let gif = document.createElement("img");
+                gif.src =
+                    "https://c.tenor.com/bY9aWoCeeC8AAAAM/asdf.gif";
+                gif.style.marginTop = "50px";
+                div_data.append(gif);
+            }
+            console.log("err:", error());
+        }
+    }
+</script>
